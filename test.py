@@ -23,17 +23,20 @@ class TestAL4(ServiceBase):
 
     def execute(self, request: ServiceRequest) -> None:
         stime = time.time()
+        timeout = request.get_param("timeout")
+        self.log.warning(f"execute() from {self.service_attributes.name} service called")
+        self.log.warning(f"Timeout is set to {timeout} seconds")
         while True:
             time.sleep(1)
             ctime = int(time.time() - stime)
             if ctime % 10 == 0:
                 self.log.warning(f"Service is running for {ctime} seconds")
-            if ctime > 180:
+            if ctime > timeout:
                 break
         self.log.warning(f"Service has finished after running for {ctime} seconds")
         text_section = ResultSection('Output')
         try:
-            text_section.add_line("Hello World")
+            text_section.add_line(f"Ran for {ctime} seconds")
         except Exception:
             self.log.exception("Error parsing output.")
         result.add_section(text_section)
